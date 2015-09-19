@@ -225,6 +225,38 @@ avg_steps_per_interval
 ## ..      ...       ...
 ```
 
+Generate a time series plot of average number of steps taken over 5-minute
+intervals.
+
+
+```r
+ggplot(avg_steps_per_interval, aes(x = interval, y = avg_steps)) +
+    geom_line(colour = "firebrick") + 
+    ggtitle("Avg Steps Over 5 Min Interval") +
+    theme(plot.title = element_text(size = 15, face = 'bold',
+                                    vjust = 2)) +
+    labs(x = "Intervals", y = "Avg Steps")
+```
+
+![](PA1_template_files/figure-html/timeplot-1.png) 
+
+Let's compute which 5-minute interval on average has the maximum number of 
+steps
+
+
+```r
+max_step_row <- top_n(x = avg_steps_per_interval, 1, wt = avg_steps)
+
+max_step_row$interval
+```
+
+```
+## [1] 835
+```
+
+The 5-minute interval with the maximum number of steps on an average is 
+835.
+
 ## Imputing missing values
 
 
