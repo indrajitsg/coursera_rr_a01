@@ -1,0 +1,85 @@
+---
+title: 'Reproducible Research: Peer Assessment 1'
+output:
+  html_document:
+    highlight: pygments
+    keep_md: yes
+    theme: united
+---
+
+## Loading and preprocessing the data
+
+Specify global options
+
+```{r setoptions, warning=FALSE}
+library(knitr)
+opts_chunk$set(echo = TRUE, warning = FALSE)
+```
+
+Setup the working directory
+
+```{r workdir, echo=TRUE}
+setwd("D:/Work/Copy/R Workspaces/Programs/R Markdown/coursera_rr_a01")
+```
+
+Let's load the required libraries
+
+```{r loaddata, echo=TRUE}
+library(dplyr)
+library(ggplot2)
+library(readr)
+```
+
+Let's import the data from the zip file directly and display the top 10
+observations.
+
+```{r importfile}
+df <- read.csv(unz("activity.zip", "activity.csv"), header = T,
+               stringsAsFactors = FALSE)
+
+head(df)
+```
+
+Check the metadata and display some summary statistics
+
+```{r displaymeta}
+str(df)
+summary(df)
+```
+
+The date column needs to be converted into date format from the character
+format.
+
+```{r preprocess}
+df$date2 <- as.Date(df$date)
+str(df)
+```
+
+Drop the character column and rename date2 to date.
+
+```{r renamecols}
+df$date <- NULL
+colnames(df)[3] <- "date"
+head(df)
+```
+
+## What is mean total number of steps taken per day?
+
+Compute total number of steps taken per day
+
+```{r averagesteps}
+total_steps_per_day <- group_by(.data = df, date) %>%
+    summarise(total_steps = sum(steps))
+
+total_steps_per_day
+```
+
+## What is the average daily activity pattern?
+
+
+
+## Imputing missing values
+
+
+
+## Are there differences in activity patterns between weekdays and weekends?
