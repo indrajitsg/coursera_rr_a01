@@ -14,6 +14,7 @@ Specify global options
 ```{r setoptions, warning=FALSE}
 library(knitr)
 opts_chunk$set(echo = TRUE, warning = FALSE)
+options(scipen = 7)
 ```
 
 Setup the working directory
@@ -30,7 +31,7 @@ library(ggplot2)
 library(readr)
 ```
 
-Let's import the data from the zip file directly and display the top 10
+Let's import the data from the zip file directly and display the top 6
 observations.
 
 ```{r importfile}
@@ -89,14 +90,14 @@ ggplot(total_steps_per_day, aes(total_steps)) +
 Lets compute the mean and median number of steps taken per day.
 
 ```{r avgsteps}
-avg_steps <- mean(total_steps_per_day$total_steps, na.rm = TRUE)
+avg_steps <- round(mean(total_steps_per_day$total_steps, na.rm = TRUE), 1)
 avg_steps
-med_steps <- median(total_steps_per_day$total_steps, na.rm = TRUE)
+med_steps <- round(median(total_steps_per_day$total_steps, na.rm = TRUE), 1)
 med_steps
 ```
 
-The average number of steps taken per day is `r avg_steps` and the median
-number of steps taken per day is `r med_steps`.
+The average number of steps taken per day is **`r avg_steps`** and the median
+number of steps taken per day is **`r med_steps`**.
 
 ## What is the average daily activity pattern?
 
@@ -135,6 +136,71 @@ The 5-minute interval with the maximum number of steps on an average is
 
 ## Imputing missing values
 
+Compute the number of rows with missing values.
 
+```{r computemissing}
+# Computing only for steps, since interal and date does not have missing
+nrow_miss <- length(which(is.na(df$steps)))
+
+nrow_miss
+```
+
+There are `r nrow_miss` rows missing value. We can try imputing the missing
+with average of the corresponding 5-minute intervals across all other days.
+We have already calculated the average in the table **avg_steps_per_interal**.
+We can merge **avg_steps_per_interal** with **df** on **interval** and replace
+missing values with **avg_steps**.
+
+```{r imputemissing}
+df2 <- df %>% left_join(avg_steps_per_interval)
+
+# Check the output dataset
+head(df2)
+
+# Replace missing steps with avg_steps
+df2$steps <- ifelse(is.na(df2$steps), df2$avg_steps, df2$steps)
+
+# Check the output dataset
+head(df2)
+
+# Check if any missing value remains
+which(is.na(df2))
+
+# Drop avg_steps
+df2$avg_steps <- NULL
+```
+
+Recomputing total steps per day, generating histograms and computing mean and 
+median of total number of steps taken per day.
+
+```{r totalsteps, fig.height=4, fig.width=4}
+# Compute total steps
+total_steps_per_day2 <- group_by(.data = df2, date) %>%
+    summarise(total_steps = sum(steps, na.rm = TRUE))
+
+# Display top 10 rows
+total_steps_per_day2
+
+# Generate a histogram of steps taken per day.
+ggplot(total_steps_per_day2, aes(total_steps)) +
+    geom_histogram(binwidth = 3000, color = 'black',
+                   fill = 'firebrick') +
+    ggtitle('Steps Per Day with Imputation') +
+    theme(plot.title = element_text(size = 15, face = 'bold',
+                                    vjust = 2)) +
+    labs(x = "Total Steps", y = "Count")
+
+# Lets recompute the mean and median number of steps taken per day.
+avg_steps2 <- round(mean(total_steps_per_day2$total_steps, na.rm = TRUE), 1)
+avg_steps2
+
+med_steps2 <- round(median(total_steps_per_day2$total_steps, na.rm = TRUE), 1)
+med_steps2
+```
+
+The earlier mean and median values of number of steps taken per day were 
+**`r avg_steps`** and **`r med_steps`** respectively. Due to imputation, the 
+mean and the median number of steps per day have increased to **`r avg_steps2`**
+and **`r med_steps2`** respectively.
 
 ## Are there differences in activity patterns between weekdays and weekends?
