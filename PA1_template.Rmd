@@ -65,7 +65,7 @@ head(df)
 
 ## What is mean total number of steps taken per day?
 
-Compute total number of steps taken per day
+Compute total number of steps taken per day and save it in a new dataset.
 
 ```{r averagesteps}
 total_steps_per_day <- group_by(.data = df, date) %>%
@@ -73,6 +73,30 @@ total_steps_per_day <- group_by(.data = df, date) %>%
 
 total_steps_per_day
 ```
+
+Generate a histogram of steps taken per day.
+
+```{r histogram, fig.height=4, fig.width=4}
+ggplot(total_steps_per_day, aes(total_steps)) +
+    geom_histogram(binwidth = 3000, color = 'black',
+                   fill = 'firebrick') +
+    ggtitle('Steps Per Day') +
+    theme(plot.title = element_text(size = 15, face = 'bold',
+                                    vjust = 2)) +
+    labs(x = "Total Steps", y = "Count")
+```
+
+Lets compute the mean and median number of steps taken per day.
+
+```{r avgsteps}
+avg_steps <- mean(total_steps_per_day$total_steps, na.rm = TRUE)
+avg_steps
+med_steps <- median(total_steps_per_day$total_steps, na.rm = TRUE)
+med_steps
+```
+
+The average number of steps taken per day is `r avg_steps` and the median
+number of steps taken per day is `r med_steps`.
 
 ## What is the average daily activity pattern?
 
