@@ -189,6 +189,7 @@ med_steps</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">avg_steps_per_interval &lt;-<span class="st"> </span><span class="kw">group_by</span>(<span class="dt">.data =</span> df, interval) %&gt;%
 <span class="st">    </span><span class="kw">summarise</span>(<span class="dt">avg_steps =</span> <span class="kw">mean</span>(steps, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>))
 
+<span class="co"># Look at top few rows</span>
 avg_steps_per_interval</code></pre>
 <pre><code>## Source: local data frame [288 x 2]
 ## 
@@ -293,7 +294,7 @@ avg_steps2</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">med_steps2 &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="kw">median</span>(total_steps_per_day2$total_steps, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>), <span class="dv">1</span>)
 med_steps2</code></pre>
 <pre><code>## [1] 10766.2</code></pre>
-<p>The earlier mean and median values of number of steps taken per day were <strong>9354.2</strong> and <strong>10395</strong> respectively. Due to imputation, the mean and the median number of steps per day have increased to <strong>10766.2</strong> and <strong>10766.2</strong> respectively.</p>
+<p>The earlier mean and median values of number of steps taken per day were <strong>9354.2</strong> and <strong>10395</strong> respectively. Due to imputation, the mean and the median number of steps per day have increased to <strong>10766.2</strong> and <strong>10766.2</strong> respectively. The distribution of total number of steps per day have become more symmetric around the mean. The distribution has become more peaked as all the missing values are now appearing at the middle.</p>
 </div>
 <div id="are-there-differences-in-activity-patterns-between-weekdays-and-weekends" class="section level2">
 <h2>Are there differences in activity patterns between weekdays and weekends?</h2>

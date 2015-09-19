@@ -107,6 +107,7 @@ Aggregate total steps taken at 5 min intervals averaged across days
 avg_steps_per_interval <- group_by(.data = df, interval) %>%
     summarise(avg_steps = mean(steps, na.rm = TRUE))
 
+# Look at top few rows
 avg_steps_per_interval
 ```
 
@@ -201,6 +202,8 @@ med_steps2
 The earlier mean and median values of number of steps taken per day were 
 **`r avg_steps`** and **`r med_steps`** respectively. Due to imputation, the 
 mean and the median number of steps per day have increased to **`r avg_steps2`**
-and **`r med_steps2`** respectively.
+and **`r med_steps2`** respectively. The distribution of total number of steps
+per day have become more symmetric around the mean. The distribution has become
+more peaked as all the missing values are now appearing at the middle.
 
 ## Are there differences in activity patterns between weekdays and weekends?
