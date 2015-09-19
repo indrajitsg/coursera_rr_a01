@@ -135,7 +135,7 @@ Compute total number of steps taken per day and save it in a new dataset.
 
 ```r
 total_steps_per_day <- group_by(.data = df, date) %>%
-    summarise(total_steps = sum(steps))
+    summarise(total_steps = sum(steps, na.rm = TRUE))
 
 total_steps_per_day
 ```
@@ -144,14 +144,14 @@ total_steps_per_day
 ## Source: local data frame [61 x 2]
 ## 
 ##          date total_steps
-## 1  2012-10-01          NA
+## 1  2012-10-01           0
 ## 2  2012-10-02         126
 ## 3  2012-10-03       11352
 ## 4  2012-10-04       12116
 ## 5  2012-10-05       13294
 ## 6  2012-10-06       15420
 ## 7  2012-10-07       11015
-## 8  2012-10-08          NA
+## 8  2012-10-08           0
 ## 9  2012-10-09       12811
 ## 10 2012-10-10        9900
 ## ..        ...         ...
@@ -181,7 +181,7 @@ avg_steps
 ```
 
 ```
-## [1] 10766.19
+## [1] 9354.23
 ```
 
 ```r
@@ -190,15 +190,40 @@ med_steps
 ```
 
 ```
-## [1] 10765
+## [1] 10395
 ```
 
-The average number of steps taken per day is 1.0766189\times 10^{4} and the median
-number of steps taken per day is 10765.
+The average number of steps taken per day is 9354.2295082 and the median
+number of steps taken per day is 10395.
 
 ## What is the average daily activity pattern?
 
+Aggregate total steps taken at 5 min intervals averaged across days
 
+
+```r
+avg_steps_per_interval <- group_by(.data = df, interval) %>%
+    summarise(avg_steps = mean(steps, na.rm = TRUE))
+
+avg_steps_per_interval
+```
+
+```
+## Source: local data frame [288 x 2]
+## 
+##    interval avg_steps
+## 1         0 1.7169811
+## 2         5 0.3396226
+## 3        10 0.1320755
+## 4        15 0.1509434
+## 5        20 0.0754717
+## 6        25 2.0943396
+## 7        30 0.5283019
+## 8        35 0.8679245
+## 9        40 0.0000000
+## 10       45 1.4716981
+## ..      ...       ...
+```
 
 ## Imputing missing values
 

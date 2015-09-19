@@ -69,7 +69,7 @@ Compute total number of steps taken per day and save it in a new dataset.
 
 ```{r averagesteps}
 total_steps_per_day <- group_by(.data = df, date) %>%
-    summarise(total_steps = sum(steps))
+    summarise(total_steps = sum(steps, na.rm = TRUE))
 
 total_steps_per_day
 ```
@@ -100,7 +100,14 @@ number of steps taken per day is `r med_steps`.
 
 ## What is the average daily activity pattern?
 
+Aggregate total steps taken at 5 min intervals averaged across days
 
+```{r avgdailypattern}
+avg_steps_per_interval <- group_by(.data = df, interval) %>%
+    summarise(avg_steps = mean(steps, na.rm = TRUE))
+
+avg_steps_per_interval
+```
 
 ## Imputing missing values
 
