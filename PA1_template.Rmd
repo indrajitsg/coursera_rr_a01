@@ -29,6 +29,7 @@ Let's load the required libraries
 library(dplyr)
 library(ggplot2)
 library(readr)
+library(lattice)
 ```
 
 Let's import the data from the zip file directly and display the top 6
@@ -207,3 +208,42 @@ per day have become more symmetric around the mean. The distribution has become
 more peaked as all the missing values are now appearing at the middle.
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+Creating a new factor variable to indicate weekday / weekend.
+
+```{r activitypattern}
+# Using df2 with imputed values and creating a flag
+df2 <- mutate(df2, 
+       flag = ifelse(weekdays(date, TRUE) %in% c("Sat", "Sun"),
+                     "weekend", "weekday"))
+
+# Check
+table(df2$flag)
+
+# Change data type to factor
+df2$flag <- factor(x = df2$flag, levels = c("weekday", "weekend"))
+
+# Check
+str(df2)
+```
+
+Now aggregate the data at **flag**, **inteval** level and compute average
+number of steps taken across all days.
+
+```{r panelplot}
+# Rollup
+avg_steps_by_int_flag <- group_by(.data = df2, flag, interval) %>%
+    summarise(avg_steps = mean(steps, na.rm = TRUE))
+
+# Look at top few rows
+avg_steps_by_int_flag
+
+# Generate the panel plot
+xyplot(avg_steps ~ interval | flag, data = avg_steps_by_int_flag, 
+       layout = c(1, 2), type = "l", xlab = "Interval", ylab = "Number of Steps")
+```
+
+There appears to be a difference in activity from **weekday** to **weekend**.
+There is a spike in activity in the first half of the day on weekdays, followed
+by a steady fluctuation for the rest of the day. This might be due to visit to office. On weekends, the overall activity seems to have a constant variation throughout the day with no major spikes coming out.
+

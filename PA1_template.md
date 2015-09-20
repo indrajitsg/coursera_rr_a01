@@ -41,6 +41,7 @@ library(dplyr)
 ```r
 library(ggplot2)
 library(readr)
+library(lattice)
 ```
 
 Let's import the data from the zip file directly and display the top 6
@@ -407,3 +408,82 @@ per day have become more symmetric around the mean. The distribution has become
 more peaked as all the missing values are now appearing at the middle.
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+Creating a new factor variable to indicate weekday / weekend.
+
+
+```r
+# Using df2 with imputed values and creating a flag
+df2 <- mutate(df2, 
+       flag = ifelse(weekdays(date, TRUE) %in% c("Sat", "Sun"),
+                     "weekend", "weekday"))
+
+# Check
+table(df2$flag)
+```
+
+```
+## 
+## weekday weekend 
+##   12960    4608
+```
+
+```r
+# Change data type to factor
+df2$flag <- factor(x = df2$flag, levels = c("weekday", "weekend"))
+
+# Check
+str(df2)
+```
+
+```
+## 'data.frame':	17568 obs. of  4 variables:
+##  $ steps   : num  1.717 0.3396 0.1321 0.1509 0.0755 ...
+##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
+##  $ date    : Date, format: "2012-10-01" "2012-10-01" ...
+##  $ flag    : Factor w/ 2 levels "weekday","weekend": 1 1 1 1 1 1 1 1 1 1 ...
+```
+
+Now aggregate the data at **flag**, **inteval** level and compute average
+number of steps taken across all days.
+
+
+```r
+# Rollup
+avg_steps_by_int_flag <- group_by(.data = df2, flag, interval) %>%
+    summarise(avg_steps = mean(steps, na.rm = TRUE))
+
+# Look at top few rows
+avg_steps_by_int_flag
+```
+
+```
+## Source: local data frame [576 x 3]
+## Groups: flag
+## 
+##       flag interval  avg_steps
+## 1  weekday        0 2.25115304
+## 2  weekday        5 0.44528302
+## 3  weekday       10 0.17316562
+## 4  weekday       15 0.19790356
+## 5  weekday       20 0.09895178
+## 6  weekday       25 1.59035639
+## 7  weekday       30 0.69266247
+## 8  weekday       35 1.13794549
+## 9  weekday       40 0.00000000
+## 10 weekday       45 1.79622642
+## ..     ...      ...        ...
+```
+
+```r
+# Generate the panel plot
+xyplot(avg_steps ~ interval | flag, data = avg_steps_by_int_flag, 
+       layout = c(1, 2), type = "l", xlab = "Interval", ylab = "Number of Steps")
+```
+
+![](PA1_template_files/figure-html/panelplot-1.png) 
+
+There appears to be a difference in activity from **weekday** to **weekend**.
+There is a spike in activity in the first half of the day on weekdays, followed
+by a steady fluctuation for the rest of the day. This might be due to visit to office. On weekends, the overall activity seems to have a constant variation throughout the day with no major spikes coming out.
+
